@@ -1,11 +1,12 @@
 import primeFactors from "./primeFactor";
 
 const TongCacUocSoCuaN = (n: number): number => {
-    const factors = primeFactors(n);
     let tong = 0;
-    for (const factor in factors) {
-        tong += +factor;
+    for (let i = 1; i <= n / 2; i++) {
+        if (n % i === 0) tong += i;
     }
-    return tong;
+    return tong + n;
 };
-export default TongCacUocSoCuaN
+console.log(TongCacUocSoCuaN(6));
+
+export default TongCacUocSoCuaN;
