@@ -1,5 +1,5 @@
 import det from "./det";
-
+import ChuyenViMatrix from "./MaTranChuyenVi";
 function CofactorMatrix(matrix: number[][]): number[][] {
     const n = matrix.length;
     const cofactorMatrix: number[][] = [];
@@ -16,10 +16,6 @@ function CofactorMatrix(matrix: number[][]): number[][] {
     }
 
     return cofactorMatrix;
-}
-
-function ChuyenViMatrix(matrix: number[][]): number[][] {
-    return matrix[0].map((_, colIndex) => matrix.map((row) => row[colIndex]));
 }
 
 function NghichDaoMatrix(matrix: number[][]): number[][] | null {
