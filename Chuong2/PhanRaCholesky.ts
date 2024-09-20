@@ -1,5 +1,5 @@
 import det from "./det";
-import { isMatranDoiXung } from "./MaTranChuyenVi";
+import { isMatranDoiXung } from "./KiemTraMaTranDoiXung";
 
 function isMaTranVuong(A: number[][]): boolean {
     const numRows = A.length;

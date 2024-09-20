@@ -18,7 +18,7 @@ function CofactorMatrix(matrix: number[][]): number[][] {
     return cofactorMatrix;
 }
 
-function NghichDaoMatrix(matrix: number[][]): number[][] | null {
+export function NghichDaoMatrix(matrix: number[][]): number[][] | null {
     const dinhthuc = det(matrix);
     if (dinhthuc === 0) {
         return null;
