@@ -5,7 +5,7 @@ import { giaiPTGauss } from "./giaiPTGauss";
 import det from "./det";
 
 // Hàm tìm chỉ số riêng (eigenvalue) bằng cách giải phương trình đặc trưng
-export function findEigenvalues(A: number[][]): number[] {
+export function timGiaTriRieng(A: number[][]): number[] {
     const n = A.length;
     const eigenvalues: number[] = [];
 
@@ -17,7 +17,7 @@ export function findEigenvalues(A: number[][]): number[] {
             I.map((row) => row.map((x) => x * λ))
         );
         const determinant = det(A_minus_lambda_I);
-        if (Math.abs(determinant) < 1e-6) {
+        if (Math.abs(determinant) < 1e-5) {
             eigenvalues.push(λ);
         }
     }
@@ -25,13 +25,8 @@ export function findEigenvalues(A: number[][]): number[] {
     return eigenvalues;
 }
 
-
-
 // Hàm tìm vectơ riêng (eigenvector) tương ứng với eigenvalue
-export function findEigenvectors(
-    A: number[][],
-    eigenvalue: number
-): number[][] {
+export function timVectoRieng(A: number[][], eigenvalue: number): number[][] {
     const n = A.length;
     const I = maTranDonVi(n);
     const A_minus_lambda_I = truMaTran(
@@ -50,14 +45,14 @@ export function findEigenvectors(
 
 // Ví dụ sử dụng
 const A = [
-    [2, 1],
-    [1, 2],
+    [4, -2],
+    [1, 1],
 ];
 
-const eigenvalues = findEigenvalues(A);
+const eigenvalues = timGiaTriRieng(A);
 console.log("Eigenvalues:", eigenvalues);
 
 eigenvalues.forEach((λ) => {
-    const eigenvectors = findEigenvectors(A, λ);
+    const eigenvectors = timVectoRieng(A, λ);
     console.log(`Eigenvector for λ = ${λ}:`, eigenvectors);
 });

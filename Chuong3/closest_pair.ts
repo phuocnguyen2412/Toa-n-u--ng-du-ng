@@ -1,45 +1,45 @@
-type Point3D = {
+type Diem3D = {
     x: number;
     y: number;
     z: number;
 };
 
-function distance(point1: Point3D, point2: Point3D): number {
-    const { x: x1, y: y1, z: z1 } = point1;
-    const { x: x2, y: y2, z: z2 } = point2;
+function khoangCach(diem1: Diem3D, diem2: Diem3D): number {
+    const { x: x1, y: y1, z: z1 } = diem1;
+    const { x: x2, y: y2, z: z2 } = diem2;
     return Math.sqrt(
         Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2)
     );
 }
 
-function bruteForce(
-    points: Point3D[],
-    left: number,
-    right: number
-): { distance: number; points: [Point3D, Point3D] } {
+function timBangManh(
+    diem: Diem3D[],
+    trai: number,
+    phai: number
+): { khoangCach: number; diem: [Diem3D, Diem3D] } {
     let minDist = Infinity;
-    let closestPoints: [Point3D, Point3D] = [points[left], points[left + 1]];
+    let diemGanNhat: [Diem3D, Diem3D] = [diem[trai], diem[trai + 1]];
 
-    for (let i = left; i <= right; i++) {
-        for (let j = i + 1; j <= right; j++) {
-            const dist = distance(points[i], points[j]);
+    for (let i = trai; i <= phai; i++) {
+        for (let j = i + 1; j <= phai; j++) {
+            const dist = khoangCach(diem[i], diem[j]);
             if (dist < minDist) {
                 minDist = dist;
-                closestPoints = [points[i], points[j]];
+                diemGanNhat = [diem[i], diem[j]];
             }
         }
     }
 
-    return { distance: minDist, points: closestPoints };
+    return { khoangCach: minDist, diem: diemGanNhat };
 }
 
-function stripClosest(
-    strip: Point3D[],
+function stripGanNhat(
+    strip: Diem3D[],
     d: number,
-    closestPoints: [Point3D, Point3D]
-): { distance: number; points: [Point3D, Point3D] } {
+    diemGanNhat: [Diem3D, Diem3D]
+): { khoangCach: number; diem: [Diem3D, Diem3D] } {
     let minDist = d;
-    let minPoints = closestPoints;
+    let diemMin = diemGanNhat;
 
     strip.sort((a, b) => a.y - b.y);
 
@@ -49,54 +49,54 @@ function stripClosest(
             j < strip.length && strip[j].y - strip[i].y < minDist;
             j++
         ) {
-            const dist = distance(strip[i], strip[j]);
+            const dist = khoangCach(strip[i], strip[j]);
             if (dist < minDist) {
                 minDist = dist;
-                minPoints = [strip[i], strip[j]];
+                diemMin = [strip[i], strip[j]];
             }
         }
     }
 
-    return { distance: minDist, points: minPoints };
+    return { khoangCach: minDist, diem: diemMin };
 }
 
-function closestUtil(
-    points: Point3D[],
-    left: number,
-    right: number
-): { distance: number; points: [Point3D, Point3D] } {
-    if (right - left <= 3) {
-        return bruteForce(points, left, right);
+function timDiemGanNhat(
+    diem: Diem3D[],
+    trai: number,
+    phai: number
+): { khoangCach: number; diem: [Diem3D, Diem3D] } {
+    if (phai - trai <= 3) {
+        return timBangManh(diem, trai, phai);
     }
 
-    const mid = Math.floor((left + right) / 2);
-    const midPoint = points[mid];
+    const giua = Math.floor((trai + phai) / 2);
+    const diemGiua = diem[giua];
 
-    const dl = closestUtil(points, left, mid);
-    const dr = closestUtil(points, mid + 1, right);
+    const dl = timDiemGanNhat(diem, trai, giua);
+    const dr = timDiemGanNhat(diem, giua + 1, phai);
 
-    let d = dl.distance < dr.distance ? dl : dr;
+    let d = dl.khoangCach < dr.khoangCach ? dl : dr;
 
-    const strip: Point3D[] = [];
-    for (let i = left; i <= right; i++) {
-        if (Math.abs(points[i].x - midPoint.x) < d.distance) {
-            strip.push(points[i]);
+    const strip: Diem3D[] = [];
+    for (let i = trai; i <= phai; i++) {
+        if (Math.abs(diem[i].x - diemGiua.x) < d.khoangCach) {
+            strip.push(diem[i]);
         }
     }
 
-    return stripClosest(strip, d.distance, d.points);
+    return stripGanNhat(strip, d.khoangCach, d.diem);
 }
 
-function closest(points: Point3D[]): {
-    distance: number;
-    points: [Point3D, Point3D];
+function diemGanNhat(diem: Diem3D[]): {
+    khoangCach: number;
+    diem: [Diem3D, Diem3D];
 } {
-    points.sort((a, b) => a.x - b.x);
+    diem.sort((a, b) => a.x - b.x);
 
-    return closestUtil(points, 0, points.length - 1);
+    return timDiemGanNhat(diem, 0, diem.length - 1);
 }
 
-const points: Point3D[] = [
+const diem1: Diem3D[] = [
     { x: 0, y: 0, z: 1 },
     { x: 3, y: 4, z: 2 },
     { x: 7, y: 1, z: 3 },
@@ -105,5 +105,5 @@ const points: Point3D[] = [
     { x: 5, y: 5, z: 5 },
 ];
 
-const result = closest(points);
-console.log("Khoảng cách ngắn nhất giữa 2 điểm là:", result);
+const ketQua = diemGanNhat(diem1);
+console.log("Khoảng cách ngắn nhất giữa 2 điểm là:", ketQua);

@@ -1,7 +1,6 @@
 export function giaiPTGauss(matrix: number[][]): number[] {
     const n = matrix.length;
     const m = matrix[0].length;
-
     // Biến đổi ma trận thành dạng bậc thang
     for (let i = 0; i < n; i++) {
         // Tìm pivot
@@ -11,8 +10,10 @@ export function giaiPTGauss(matrix: number[][]): number[] {
                 maxRow = k;
             }
         }
-        [matrix[i], matrix[maxRow]] = [matrix[maxRow], matrix[i]]; // Hoán đổi hàng
-
+        // Kiểm tra nếu pivot là zero (ma trận singular)
+        if (Math.abs(matrix[maxRow][i]) < 1e-10) continue;
+        // Hoán đổi hàng
+        [matrix[i], matrix[maxRow]] = [matrix[maxRow], matrix[i]];
         // Đưa về dạng bậc thang
         for (let k = i + 1; k < n; k++) {
             const factor = matrix[k][i] / matrix[i][i];
@@ -21,18 +22,20 @@ export function giaiPTGauss(matrix: number[][]): number[] {
             }
         }
     }
-
-    // Tìm nghiệm không tầm thường
+    // Tìm nghiệm không tầm thường (back substitution)
     const solution: number[] = new Array(n).fill(0);
-    solution[n - 1] = 1; // Chọn một giá trị tự do cho nghiệm cuối cùng (để tránh tất cả bằng 0)
-
+    solution[n - 1] = 1; // Chọn một giá trị tự do cho nghiệm cuối cùng
     for (let i = n - 2; i >= 0; i--) {
         let sum = 0;
         for (let j = i + 1; j < n; j++) {
             sum += matrix[i][j] * solution[j];
         }
-        solution[i] = -sum / matrix[i][i]; // Giải ngược
+        if (Math.abs(matrix[i][i]) > 1e-10) {
+            // Kiểm tra nếu hệ số không là zero
+            solution[i] = -sum / matrix[i][i];
+        } else {
+            solution[i] = 1; // Chọn giá trị tự do cho biến không cơ bản
+        }
     }
-
     return solution;
 }

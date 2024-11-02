@@ -1,83 +1,78 @@
-type Point = {
+type Diem = {
     x: number;
     y: number;
 };
 
-function computeOrientation(p: Point, q: Point, r: Point): number {
+function tinhHuong(p: Diem, q: Diem, r: Diem): number {
     const val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
     if (val === 0) return 0; // thẳng hàng
     return val > 0 ? 1 : -1; // 1: ngược chiều kim đồng hồ, -1: cùng chiều kim đồng hồ
 }
 
-function distanceSquared(p: Point, q: Point): number {
+function khoangCachBinhPhuong(p: Diem, q: Diem): number {
     return (p.x - q.x) ** 2 + (p.y - q.y) ** 2;
 }
 
-function convexHull(points: Point[]): Point[] {
-    const n = points.length;
+function timBaoLoi(diem: Diem[]): Diem[] {
+    const n = diem.length;
     if (n < 3) return [];
-    let p0 = points[0];
+    let p0 = diem[0];
     for (let i = 1; i < n; i++) {
-        if (
-            points[i].y < p0.y ||
-            (points[i].y === p0.y && points[i].x < p0.x)
-        ) {
-            p0 = points[i];
+        if (diem[i].y < p0.y || (diem[i].y === p0.y && diem[i].x < p0.x)) {
+            p0 = diem[i];
         }
     }
 
-    points.sort((a, b) => {
-        const o = computeOrientation(p0, a, b);
+    diem.sort((a, b) => {
+        const o = tinhHuong(p0, a, b);
         if (o === 0) {
-            return distanceSquared(p0, a) - distanceSquared(p0, b);
+            return khoangCachBinhPhuong(p0, a) - khoangCachBinhPhuong(p0, b);
         }
         return o === 1 ? -1 : 1;
     });
 
-    const hull: Point[] = [];
-    for (const p of points) {
+    const baoLoi: Diem[] = [];
+    for (const p of diem) {
         while (
-            hull.length >= 2 &&
-            computeOrientation(
-                hull[hull.length - 2],
-                hull[hull.length - 1],
+            baoLoi.length >= 2 &&
+            tinhHuong(
+                baoLoi[baoLoi.length - 2],
+                baoLoi[baoLoi.length - 1],
                 p
             ) !== 1
         ) {
-            hull.pop();
+            baoLoi.pop();
         }
-        hull.push(p);
+        baoLoi.push(p);
     }
 
-    return hull;
+    return baoLoi;
 }
 
-function DienTich(points: Point[]): number {
-    const n = points.length;
-    let area = 0;
+function tinhDienTich(diem: Diem[]): number {
+    const n = diem.length;
+    let dienTich = 0;
 
     for (let i = 0; i < n; i++) {
         const j = (i + 1) % n;
-        area += points[i].x * points[j].y - points[j].x * points[i].y;
+        dienTich += diem[i].x * diem[j].y - diem[j].x * diem[i].y;
     }
 
-    return Math.abs(area) / 2;
+    return Math.abs(dienTich) / 2;
 }
 
-const points: Point[] = [
-    { x: 0, y: 3 },
-    { x: 2, y: 3 },
-    { x: 1, y: 1 },
-    { x: 2, y: 1 },
-    { x: 3, y: 0 },
-    { x: 0, y: 0 },
-    { x: 3, y: 3 },
+const diem: Diem[] = [
+    { x: 1, y: 2 },
+    { x: 2, y: 5 },
+    { x: 3, y: 4 },
+    { x: 4, y: 3 },
+    { x: 5, y: 4 },
+    { x: 6, y: 1 },
+    { x: 7, y: 5 },
 ];
 
+const baoLoi = timBaoLoi(diem);
+console.log("Các điểm trên bao lồi là:", baoLoi);
 
-const hull = convexHull(points);
-console.log("Các điểm trên bao lồi là:", hull);
-
-
-const area = DienTich(hull);
-console.log("Diện tích bao lồi là:", area);
+const dienTich = tinhDienTich(baoLoi);
+console.log("Diện tích bao lồi là:", dienTich);
