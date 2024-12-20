@@ -51,7 +51,7 @@ function tichUocSo(n: number): number {
 }
 
 // Kiểm tra với n = 20000
-const n = 20000;
+const n = 55;
 console.log(dinhDangThuaSoNguyenTo(n));
 console.log(`Tổng các ước số của ${n} là: ${tongUocSo(n)}`);
 console.log(`Tích các ước số của ${n} là: ${tichUocSo(n)}`);
