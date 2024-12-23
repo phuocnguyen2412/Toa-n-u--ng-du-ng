@@ -36,7 +36,7 @@ def chinese_remainder_theorem(a: list[int], m: list[int]):
     print(f"Nghiệm của hệ phương trình thặng dư Trung Hoa là x = {result} (mod {M})")
 
 
-a = [4, 5, 8, 9]
-m = [5, 7, 9, 11]
+a = [1, 4, 1, 1]
+m = [3, 5, 7, 8]
 
 chinese_remainder_theorem(a, m)

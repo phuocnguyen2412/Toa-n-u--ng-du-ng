@@ -1,55 +1,51 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import math
 
 
-def grad(x):
-    term1 = (2 * np.exp(2 * x) + 6 * x + 8) * (35 - x) + (
-        np.exp(2 * x) + 3 * x**2 + 8 * x
-    ) * 1
-    term2 = (35 - x) ** 2
-    return term1 / term2 - 5
 
 
-def cost(x):
-    return (np.exp(2 * x) + 3 * x**2 + 8 * x) / (35 - x) - 5 * x
+def grad(x, y):
+    sigmoid = 1 / (1 + math.exp(-x))
+    if y == 1:
+        grad_x = -(1 / math.log(10)) * sigmoid * math.exp(-x)
+    elif y == 0:
+        grad_x = (1 / math.log(10)) * sigmoid
+    grad_y = 0
+    return np.array([grad_x, grad_y])
 
+# Hàm chi phí f(x, y)
+def cost(x, y):
+    if y == 1:
+        return -math.log(1 / (1 + math.exp(-x)), 10)
+    elif y == 0:
+        return -math.log(1 - 1 / (1 + math.exp(-x)), 10)
 
-# check convergence
-def has_converged(theta_new, grad):
-    return np.linalg.norm(grad(theta_new)) / len(theta_new) < 0.001
+# Kiểm tra hội tụ
+def has_converged(grad_value, threshold=0.001):
+    return np.linalg.norm(grad_value) < threshold
 
-
-def GD_momentum(theta_init, learning_rate=0.1, beta=0.9):
-    theta = [theta_init]
-    v_old = np.zeros_like(theta_init)
-    for it in range(1000):
-        v_new = beta * v_old + learning_rate * grad(theta[-1])
+# Gradient Descent with Momentum
+def GD_momentum(theta_init, v_init, learning_rate=0.1, beta=0.4, iteration=10000):
+    global it
+    theta = [np.array(theta_init)]
+    v_old = np.array(v_init)
+    for it in range(iteration):
+        grad_val = grad(theta[-1][0], theta[-1][1])
+        v_new = beta * v_old + learning_rate * grad_val
         theta_new = theta[-1] - v_new
         theta.append(theta_new)
-        if has_converged(theta_new, grad=grad):
+        if has_converged(grad_val):
             break
         v_old = v_new
-    return (theta, it)
+    return theta, it
 
 
-def myGD1(x0, alpha=0.1, gra=1e-3, loop=1000):
-    x = [x0]
-    for it in range(loop):
-        x_new = x[-1] - alpha * grad(x[-1])
-        if abs(grad(x_new)) < gra:
-            break
-        x.append(x_new)
-    return (x, it)
+theta_init = [5, 1]
+v_init = [0, 0]
+(theta, it) = GD_momentum(theta_init, v_init, learning_rate=0.1, beta=0.4, iteration=30000)
+x_min, y_min = theta[-1]
 
+print(
+    f"Momentum Solution: x = {x_min}, y = {y_min}, cost = {cost(x_min, y_min)}, grad = {grad(x_min, y_min)} obtained after {it} iterations"
 
-if __name__ == "__main__":
-    (x3, it3) = myGD1(5, 0.1)
-    print(
-        "GD_Solution x3 = %f, cost = %f, obtained after %d iterations"
-        % (x3[-1], cost(x3[-1]), it3)
-    )
-    (x1, it1) = GD_momentum(5, learning_rate=1, beta=0.9)
-    print(
-        "Momentum_Solution x1 = %f, cost = %f, obtained after %d iterations"
-        % (x1[-1], cost(x1[-1]), it1)
-    )
+)
